@@ -1,0 +1,52 @@
+---
+title: "Reproducible Research Course Project 1"
+author: "Leonardo Lopez"
+date: "May 10th, 2016"
+output: html_document
+---
+
+#Introduction 
+This assignment makes use of data from a personal activity monitoring device. This device collects data at 5 minute intervals through out the day. The data consists of two months of data from an anonymous individual collected during the months of October and November, 2012 and include the number of steps taken in 5 minute intervals each day.
+
+##Requirements  
+In order to reproduce the research done make sure you load the following packages and 
+always use `echo = TRUE` so that someone else will be able to read the code. 
+
+
+```{r, echo=TRUE}
+library(knitr)
+library(dplyr)
+library(lubridate)
+library(ggplot2)
+opts_chunk$set(echo = TRUE)
+```
+
+#Loading and preprocessing the data
+The data is loaded using the `read.csv ()`assuming you have downloaded the activity.csv and saved it 
+in your working directory. If not, please download it [here](https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip).
+
+##Loading the data
+```{r}
+data <- read.csv("activity.csv", header = TRUE, sep = ',', colClasses = c("numeric", 
+                                                                "character", "integer"))
+```
+
+##Preprocessing the data
+Change the dateformat using `lubridate`
+```{r}
+data$date <- ymd(data$date)
+```
+
+Review data using `str`
+```{r}
+str(data)
+```
+
+#Data Analysis
+
+##What is mean total number of steps taken per day?
+For this part of the analysis, you can ignore the missing values in the dataset.
+
+1. Calculate the total number of steps taken per day  
+2. Make a histogram of the total number of steps taken each day  
+3. Calculate and report the mean and median of the total number of steps taken per day  
