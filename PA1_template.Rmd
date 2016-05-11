@@ -2,7 +2,9 @@
 title: "Reproducible Research Course Project 1"
 author: "Leonardo Lopez"
 date: "May 10th, 2016"
-output: html_document
+output: 
+  html_document: 
+    keep_md: yes
 ---
 
 #Introduction 
@@ -136,4 +138,52 @@ data_full$steps[nas] <- avg_interval[as.character(data_full$interval[nas])]
 4. Make a histogram of the total number of steps taken each day and calculate and 
 report the mean and median total number of steps taken per day. 
 
+```{r}
+steps_full <- data_full %>%
+  filter(!is.na(steps)) %>%
+  group_by(date) %>%
+  summarize(steps = sum(steps))
+ ggplot(steps_full, aes(x = steps)) +
+  geom_histogram(fill = "yellow", binwidth = 1000) +
+  labs(title = "Total number of steps per day", x = "Steps per day", y = "Frequency")  
+```
+```{r}
+mean_steps_full <- mean(steps_full$steps, na.rm = TRUE)
+  mean_steps_full
+median_steps_full <- median(steps_full$steps, na.rm = TRUE)
+  median_steps_full
+```
 
+**Do these values differ from the estimates from the first part of the assignment?**  
+
+There is only a difference of 1 in the Median steps
+
+**What is the impact of imputing missing data on the estimates of the total daily number of steps?**
+
+Not a significant impact in this particular case   
+
+##Are there differences in activity patterns between weekdays and weekends?
+
+For this part the `weekdays()` function may be of some help here. Use the dataset 
+with the filled-in missing values for this part.  
+
+1. Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
+
+```{r}
+data_full <- mutate(data_full, typeofday = ifelse(weekdays(data_full$date) == "Saturday" | weekdays(data_full$date) == "Sunday", "weekend", "weekday"))
+data_full$typeofday <- as.factor(data_full$typeofday)
+```
+
+2. Make a panel plot containing a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).   
+
+```{r}
+interval_full <- data_full %>%
+  group_by(interval, typeofday) %>%
+  summarise(steps = mean(steps))
+ggplot(interval_full, aes(x=interval, y=steps, color = typeofday)) +
+  geom_line() +
+  facet_wrap(~typeofday, ncol = 1, nrow=2)
+```
+
+As seen in the graphics above, subjects are more active early during the weekdays. However, 
+activity seems to be more constant during the weekend. Blame it on the office jobs! 
